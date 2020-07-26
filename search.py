@@ -33,8 +33,15 @@ def parse_results(html):
 		results.append(result)
 	return results
 
+def build_query(text):
+	search_text = f"site:stackoverflow.com {text}"
+	safe_text = quote(search_text)
+	query = f"{safe_text}&kl=&df="
+	return query
+
+
 def search(text):
-	query = quote(text) + "&kl=&df="
+	query = build_query(text)
 	url = SEARCH_URL.format(query=query)
 	
 	headers = dict(HEADERS)
