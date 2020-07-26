@@ -1,6 +1,7 @@
-from urllib.parse import quote
+from urllib.parse import quote, urlparse
 from bs4 import BeautifulSoup
 import requests
+import re
 
 SEARCH_URL = "https://duckduckgo.com/lite/?q={query}"
 
@@ -15,33 +16,25 @@ HEADERS = {
 	 "DNT": "1",
 }
 
-class Result(object):
-	def __init__(self, link, title, desc):
-		self.link = link
-		self.title = title.strip()
-		self.desc = desc.strip()
-
-	def __repr__(self):
-		return f"<Result: {self.link}|{self.title}|{self.desc}>"
-
 def parse_results(html):
 	soup = BeautifulSoup(html, 'html.parser')
-	results = []
+	question_ids = []
 	for elem in soup.find_all('a', class_="result-link"):
-		sibling = elem.parent.parent.find_next("tr")
-		result = Result(elem['href'], elem.text, sibling.text)
-		results.append(result)
-	return results
+		url_path = urlparse(elem['href']).path
+		match = re.match(r'/questions/(\d+)/', url_path)
+		if match:
+			question_ids.append(match.group(1))
+	return question_ids
 
-def build_query(text):
-	search_text = f"site:stackoverflow.com {text}"
+def build_query(text, site):
+	search_text = f"site:{site} {text}"
 	safe_text = quote(search_text)
 	query = f"{safe_text}&kl=&df="
 	return query
 
 
-def search(text):
-	query = build_query(text)
+def fetch_question_ids(text, site):
+	query = build_query(text, site)
 	url = SEARCH_URL.format(query=query)
 	
 	headers = dict(HEADERS)
@@ -52,8 +45,8 @@ def search(text):
 
 
 def main():
-	results = search("foobar")
-	print(results)
+	question_ids = fetch_question_ids("foobar", "stackoverflow.com")
+	print(question_ids)
 
 if __name__ == "__main__":
 	main()
