@@ -1,7 +1,7 @@
 from duckduckgo import fetch_question_ids
 import requests
 
-QUERY_URL = "https://api.stackexchange.com/2.2/questions/{question_ids}?order={order}&sort={sort}&site={site}&filter={filter}"
+QUERY_URL = "https://api.stackexchange.com/2.2/questions/{question_ids}?order={order}&sort={sort}&site={site}&filter={filter}&key={key}"
 
 def build_url(question_ids, site):
 	url = QUERY_URL.format(
@@ -10,6 +10,7 @@ def build_url(question_ids, site):
 		sort='activity',
 		site=site,
 		filter='!)rTkraPXxg*xgr03n8Uq', # built from https://api.stackexchange.com/docs/questions-by-ids
+		key='AW5L2UbtlbHGP9T5B0KxTg((', # authenticate with key to up quota to 10,000 from 300
 	)
 	return url
 
