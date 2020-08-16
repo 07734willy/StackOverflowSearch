@@ -56,12 +56,9 @@ def fetch_questions(text, site, limit=10):
 		option_number += 1
 		limit_count += 1
 		index += 1
-		
 
 def main():
 	fetch_questions('how to use groupby python', 'stackoverflow.com')
 	
-	
-
 if __name__ == "__main__":
 	main()
